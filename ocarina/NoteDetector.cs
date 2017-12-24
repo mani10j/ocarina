@@ -21,8 +21,8 @@ namespace ocarina
         private AudioDeviceOutputNode audioO;
         private DeviceInformationCollection outputDevices;
         private DeviceInformationCollection inputDevices;
-        private AudioFrameOutputNode audioFrameOutput;
-        private int recordToggle;
+        private AudioFrameOutputNode audioFrameProcessor;
+        private bool isOn;
         private string note;
 
         public string Note
@@ -33,27 +33,26 @@ namespace ocarina
             internal set
             {
                 this.note = value;
-                this.OnPropertyChanged();
+                rootPage.ShowNote(value);
             }
         }
 
         public NoteDetector()
         {
-            recordToggle = 0;
+            isOn = false;
             output = new List<string>();
-            Note = "mynote";
+            //Note = "mynote";
         }
 
-        public int HitButton()
+        public bool HitButton()
         {
-
-            if (recordToggle % 2 == 0)
+            isOn = !isOn;
+            if (isOn)
                 ag.Start();
             else
                 ag.Stop();
 
-            recordToggle = (recordToggle + 1) % 2;
-            return recordToggle;
+            return isOn;
 
         }
 
@@ -79,6 +78,7 @@ namespace ocarina
         {
             // Raise the PropertyChanged event, passing the name of the property whose value has changed.
             this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+
         }
 
 
@@ -144,29 +144,29 @@ namespace ocarina
 
         private async Task InitProcessorNode()
         {
-            audioFrameOutput = ag.CreateFrameOutputNode();
-            if(audioFrameOutput!=null)
+            audioFrameProcessor = ag.CreateFrameOutputNode();
+            if (audioFrameProcessor != null)
             {
                 rootPage.ShowLogs("Processor Node initialized succeffully:");
                 ag.QuantumStarted += Ag_QuantumStarted;
             }
-            
+
         }
 
         private void Ag_QuantumStarted(AudioGraph sender, object args)
         {
-            AudioFrame frame = audioFrameOutput.GetFrame();
-            Note = frame.Duration.ToString();
+            AudioFrame frame = audioFrameProcessor.GetFrame();
+            // Note = frame.Duration.ToString();
         }
 
         private async Task ConnectGraphsNodes()
         {
-            if(audioI != null)
+            if (audioI != null)
             {
-                if(audioO != null)
+                if (audioO != null)
                     audioI.AddOutgoingConnection(audioO);
-                if (audioFrameOutput != null)
-                    audioI.AddOutgoingConnection(audioFrameOutput);
+                if (audioFrameProcessor != null)
+                    audioI.AddOutgoingConnection(audioFrameProcessor);
             }
             rootPage.ShowLogs("Connected nodes together.");
         }

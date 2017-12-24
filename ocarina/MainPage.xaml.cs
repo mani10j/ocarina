@@ -21,7 +21,7 @@ namespace ocarina
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MainPage : Page
+    public sealed partial class MainPage : Page 
     {
         NoteDetector NoteDetector { get; set; }
         public MainPage()
@@ -33,8 +33,8 @@ namespace ocarina
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            int ret = NoteDetector.HitButton();
-            if(ret==1)
+            bool ret = NoteDetector.HitButton();
+            if(ret)
             {
                 (sender as Button).Content = "Stop";
             }
@@ -49,6 +49,14 @@ namespace ocarina
             if (FindName("logOutput") is TextBlock logOutput)
             {
                 logOutput.Text = String.Concat(logOutput.Text, log + "\n");
+            }
+        }
+
+        public void ShowNote(string note)
+        {
+            if (FindName("noteShower") is TextBlock noteShower)
+            {
+                noteShower.Text = String.Concat(logOutput.Text, note + "\n");
             }
         }
 
