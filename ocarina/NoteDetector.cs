@@ -8,17 +8,40 @@ using Windows.Media;
 using Windows.Devices.Enumeration;
 using Windows.Media.Devices;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace ocarina
 {
     public class NoteDetector : INotifyPropertyChanged
     {
-        public string Note { get; internal set; } = "binded note";
+        private MainPage rootPage;
+        private List<string> output;
+        private AudioGraph ag;
+        private AudioDeviceInputNode audioI;
+        private AudioDeviceOutputNode audioO;
+        private DeviceInformationCollection outputDevices;
+        private DeviceInformationCollection inputDevices;
+        private AudioFrameOutputNode audioFrameOutput;
+        private int recordToggle;
+        private string note;
+
+        public string Note
+        {
+            get
+            { return this.note; }
+
+            internal set
+            {
+                this.note = value;
+                this.OnPropertyChanged();
+            }
+        }
 
         public NoteDetector()
         {
             recordToggle = 0;
             output = new List<string>();
+            Note = "mynote";
         }
 
         public int HitButton()
@@ -50,17 +73,13 @@ namespace ocarina
             ag?.Dispose();
         }
 
-        private MainPage rootPage;
-        private List<string> output;
-        private AudioGraph ag;
-        private AudioDeviceInputNode audioI;
-        private AudioDeviceOutputNode audioO;
-        private DeviceInformationCollection outputDevices;
-        private DeviceInformationCollection inputDevices;
-        private AudioFrameOutputNode audioFrameOutput;
-        private int recordToggle;
-
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
+
+        public void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            // Raise the PropertyChanged event, passing the name of the property whose value has changed.
+            this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
 
 
 
@@ -137,7 +156,7 @@ namespace ocarina
         private void Ag_QuantumStarted(AudioGraph sender, object args)
         {
             AudioFrame frame = audioFrameOutput.GetFrame();
-
+            Note = frame.Duration.ToString();
         }
 
         private async Task ConnectGraphsNodes()

@@ -11,7 +11,7 @@
         <Button Content="Start" HorizontalAlignment="Left" Height="79" Margin="481,159,0,0" VerticalAlignment="Top" Width="77" Click="Button_Click" RenderTransformOrigin="0.39,-0.804"/>
         <TextBlock x:Name="logOutput" TextWrapping="NoWrap" Text="log" VerticalAlignment="Top" Height="256" RenderTransformOrigin="1.385,2.129" Margin="0,734,10,0" />
         <TextBlock  x:Name="noteShower" 
-                    Text="{x:Bind NoteDetector.Note}"
+                    Text="{x:Bind Path=NoteDetector.Note, Mode=OneWay}"
                     Height="320" Margin="507,322,0,0" TextWrapping="NoWrap"  VerticalAlignment="Top" HorizontalAlignment="Left" Width="318" FontSize="72" FontFamily="Tahoma" FontWeight="Bold"/>
 
     </Grid>
